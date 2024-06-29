@@ -6,12 +6,13 @@ class UserController {
   static frontendURL: string = "localhost:5173/";
   async createUser(req: IRequest, res: IResponse) {
     try {
-      const { username, link, count, perClick, perSecond } = req.body;
+      const { username, link, moneyTotal, perClick, perSecond } = req.body;
       db.query(
-        "INSERT INTO users (username, link, count, perClick, perSecond) VALUES ($1, $2, $3, $4, $5)",
-        [username, link, count, perClick, perSecond],
+        "INSERT INTO users (username, link, moneyTotal, perClick, perSecond) VALUES ($1, $2, $3, $4, $5)",
+        [username, link, moneyTotal, perClick, perSecond],
       );
-      res.status(200).json({ message: "User created successfully" });
+      console.log(`[LOG] Created user ${username} successfully`);
+      res.status(200);
     } catch (error) {
       console.log(error);
       res.status(500).json(error);
@@ -42,11 +43,16 @@ class UserController {
   async updateUser(req: IRequest, res: IResponse) {
     try {
       const id = req.params.id;
-      const { username, link, count, perClick, perSecond } = req.body;
+      // let { username, link, moneyTotal, perClick, perSecond } = req.body
+      let {username, link} = req.body;
+      let moneyTotal = Number(req.body.moneyTotal)
+      let perClick = Number(req.body.perClick)
+      let perSecond = Number(req.body.perSecond)
       const user = await db.query(
-        "UPDATE users set username=$1, link=$2, count=$3, perClick=$4, perSecond=$5 WHERE id=$6 RETURNING *",
-        [username, link, count, perClick, perSecond, id],
+        "UPDATE users set username=$1, link=$2, moneyTotal=$3, perClick=$4, perSecond=$5 WHERE id=$6 RETURNING *",
+        [username, link, moneyTotal, perClick, perSecond, id],
       );
+      console.log(`[LOG] Updated user ${id} ( ${username} ) successfully`);
       res.json(user.rows[0]).status(200);
     } catch (error) {
       console.log(error);
@@ -57,7 +63,12 @@ class UserController {
   async deleteUser(req: IRequest, res: IResponse) {
     try {
       const id = req.params.id;
+      const username = await db.query(
+        "SELECT username FROM users WHERE id=$1",
+        [id],
+      );
       const user = await db.query("DELETE FROM users WHERE id=$1", [id]);
+      console.log(`[LOG] Deleted user ${id} ( ${username} ) successfully`);
       res.json(user.rows[0]).status(200);
     } catch (error) {
       console.log(error);
