@@ -11,7 +11,6 @@ A backend for cryptomine.
 - Node.js
 - TypeScript
 - Express
-- Axios
 - pg
 - Prisma (not yet) 
 
