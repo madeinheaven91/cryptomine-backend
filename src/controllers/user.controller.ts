@@ -6,10 +6,10 @@ class UserController {
   static frontendURL: string = "localhost:5173/";
   async createUser(req: IRequest, res: IResponse) {
     try {
-      const { username, link, moneyTotal, perClick, perSecond } = req.body;
+      const { userId, username, link, moneyTotal, perClick, perSecond } = req.body;
       db.query(
-        "INSERT INTO users (username, link, moneyTotal, perClick, perSecond) VALUES ($1, $2, $3, $4, $5)",
-        [username, link, moneyTotal, perClick, perSecond],
+        "INSERT INTO users (userId, username, link, moneyTotal, perClick, perSecond) VALUES ($1, $2, $3, $4, $5, $6)",
+        [userId, username, link, moneyTotal, perClick, perSecond],
       );
       console.log(`[LOG] Created user ${username} successfully`);
       res.status(200);
@@ -21,8 +21,8 @@ class UserController {
 
   async getUser(req: IRequest, res: IResponse) {
     try {
-      const id = req.params.id;
-      const user = await db.query("SELECT * FROM users WHERE id=$1", [id]);
+      const userId = req.params.userid;
+      const user = await db.query("SELECT * FROM users WHERE userid=$1", [userId]);
       res.json(user.rows[0]).status(200);
     } catch (error) {
       console.log(error);
@@ -42,17 +42,17 @@ class UserController {
 
   async updateUser(req: IRequest, res: IResponse) {
     try {
-      const id = req.params.id;
-      // let { username, link, moneyTotal, perClick, perSecond } = req.body
+      const userId = req.params.userid;
       let {username, link} = req.body;
       let moneyTotal = Number(req.body.moneyTotal)
       let perClick = Number(req.body.perClick)
       let perSecond = Number(req.body.perSecond)
+
       const user = await db.query(
-        "UPDATE users set username=$1, link=$2, moneyTotal=$3, perClick=$4, perSecond=$5 WHERE id=$6 RETURNING *",
-        [username, link, moneyTotal, perClick, perSecond, id],
+        "UPDATE users set username=$1, link=$2, moneyTotal=$3, perClick=$4, perSecond=$5 WHERE userid=$6 RETURNING *",
+        [username, link, moneyTotal, perClick, perSecond, userId],
       );
-      console.log(`[LOG] Updated user ${id} ( ${username} ) successfully`);
+      console.log(`[LOG] Updated user  ${username} ( userID: ${userId} ) successfully`);
       res.json(user.rows[0]).status(200);
     } catch (error) {
       console.log(error);
