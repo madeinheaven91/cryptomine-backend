@@ -1,8 +1,19 @@
 # cryptomine-backend
 
 A backend for cryptomine.
+
 ## TODO
-- [ ] implement upgrades
+- [x] basic CRUD
+- [ ] implement prisma
+- [ ] implement telegram bot and auth 
+
+## Stack
+- Node.js
+- TypeScript
+- Express
+- Axios
+- pg
+- Prisma (not yet) 
 
 ## Project setup
 ```sh 
